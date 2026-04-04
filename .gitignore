@@ -1,0 +1,50 @@
+# =====================
+# Python / Flask
+# =====================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Flask
+instance/
+
+# =====================
+# React / Node
+# =====================
+node_modules/
+dist/
+build/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =====================
+# Environment variables
+# =====================
+.env
+.env.*
+
+# =====================
+# OS files
+# =====================
+.DS_Store
+Thumbs.db
+
+# =====================
+# VS Code
+# =====================
+.vscode/
+
+# =====================
+# Uploaded images (optional)
+# =====================
+backend/images/
