@@ -1,70 +1,91 @@
-🌾 FarmConnect
-A Modern Farmer-to-Consumer Marketplace
+# 🌾 Farm Connect  
+### A Modern Farmer-to-Consumer Marketplace  
 
-🌟 Overview
+---
 
+## 🌟 Overview  
 Farm Connect is a full-stack web application that connects farmers directly with consumers, eliminating middlemen. It enables seamless product listing, browsing, and purchasing through a modern React and Flask-based system.
 
-🏗️ Architecture
-Frontend (React + Vite)  --->  Backend (Flask API)
-📂 Project Structure
+---
+
+## 🏗️ Architecture  
+
+---
+
+## 📂 Project Structure  
 FARMCONNECT/
 │
-├── backend/                  # Flask Backend
-│   ├── app.py
-│   ├── images/
-│   └── __pycache__/
+├── backend/ # Flask Backend
+│ ├── app.py
+│ ├── images/
+│ └── pycache/
 │
-├── farmConnect/             # React Frontend
-│   ├── public/
-│   ├── src/
-│   │   ├── assets/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   └── index.css
-│   │
-│   ├── index.html
-│   ├── package.json
-│   └── vite.config.js
+├── farmConnect/ # React Frontend
+│ ├── public/
+│ ├── src/
+│ │ ├── assets/
+│ │ ├── components/
+│ │ ├── pages/
+│ │ ├── App.jsx
+│ │ ├── main.jsx
+│ │ └── index.css
+│ │
+│ ├── index.html
+│ ├── package.json
+│ └── vite.config.js
 │
 └── README.md
-🚀 Features
-👨‍🌾 Farmer product management
-🛒 Consumer shopping & cart
-🔐 Authentication system
-🖼️ Image upload support
-📦 Organized product listings
 
-🛠️ Tech Stack
-Frontend: React (Vite), Tailwind CSS
-Backend: Flask (Python)
 
-⚙️ Installation
-Clone the repository
-git remote add origin https://github.com/ayushiyadav8421/FarmConnect.git
-git push -u origin main
+---
 
-Backend setup
+## 🚀 Features  
+- 👨‍🌾 Farmer product management  
+- 🛒 Consumer shopping & cart  
+- 🔐 Authentication system  
+- 🖼️ Image upload support  
+- 📦 Organized product listings  
+
+---
+
+## 🛠️ Tech Stack  
+- **Frontend:** React (Vite), Tailwind CSS  
+- **Backend:** Flask (Python)  
+
+---
+
+## ⚙️ Installation  
+
+### Clone the repository  
+git clone https://github.com/ayushiyadav8421/FarmConnect.git
+cd FarmConnect
+
+### Backend setup
 cd backend
 pip install -r requirements.txt
-python app.py
+python3 app.py  
 
-Frontend setup
+
+### Frontend setup  
 cd farmConnect
 npm install
 npm run dev
 
-🔮 Future Improvements
-💳 Payment integration
-📍 Location-based filtering
-⭐ Ratings & reviews
-📱 Mobile app
 
-💡 Author
-Made with ❤️ by Ayushi
+---
 
-⭐ Support
+## 🔮 Future Improvements  
+- 💳 Payment integration  
+- 📍 Location-based filtering  
+- ⭐ Ratings & reviews  
+- 📱 Mobile app  
 
+---
+
+## 💡 Author  
+Made with ❤️ by Ayushi  
+
+---
+
+## ⭐ Support  
 If you like this project, give it a ⭐ on GitHub!
