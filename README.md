@@ -1,4 +1,4 @@
-# 🌾 Farm Connect  
+# 🌾 FarmConnect  
 ### A Modern Farmer-to-Consumer Marketplace  
 
 ---
