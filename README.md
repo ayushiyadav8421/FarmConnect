@@ -9,6 +9,7 @@ Farm Connect is a full-stack web application that connects farmers directly with
 ---
 
 ## 🏗️ Architecture  
+Frontend (React + Vite) ---> Backend (Flask API)
 
 ---
 
@@ -77,8 +78,7 @@ npm run dev
 ## 🔮 Future Improvements  
 - 💳 Payment integration  
 - 📍 Location-based filtering  
-- ⭐ Ratings & reviews  
-- 📱 Mobile app  
+- ⭐ Ratings & reviews   
 
 ---
 
