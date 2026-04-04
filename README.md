@@ -16,25 +16,45 @@ Frontend (React + Vite) ---> Backend (Flask API)
 ## 📂 Project Structure  
 FARMCONNECT/
 │
-├── backend/ # Flask Backend
-│ ├── app.py
-│ ├── images/
-│ └── pycache/
+├── backend/                  # Flask Backend
+│   ├── app.py
+│   ├── images/
+│   └── __pycache__/
 │
-├── farmConnect/ # React Frontend
-│ ├── public/
-│ ├── src/
-│ │ ├── assets/
-│ │ ├── components/
-│ │ ├── pages/
-│ │ ├── App.jsx
-│ │ ├── main.jsx
-│ │ └── index.css
-│ │
-│ ├── index.html
-│ ├── package.json
-│ └── vite.config.js
+├── farmConnect/              # React Frontend
+│   ├── public/
+│   ├── src/
+│   │   ├── assets/
+│   │   ├── components/
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── Hero.jsx
+│   │   │   ├── Features.jsx
+│   │   │   ├── Categories.jsx
+│   │   │   ├── CTA.jsx
+│   │   │   └── Footer.jsx
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── Home.jsx
+│   │   │   ├── Login.jsx
+│   │   │   ├── Register.jsx
+│   │   │   ├── Products.jsx
+│   │   │   ├── Cart.jsx
+│   │   │   ├── FarmerDashboard.jsx
+│   │   │   ├── FarmerOrders.jsx
+│   │   │   └── ConsumerOrders.jsx
+│   │   │
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   └── index.css
+│   │
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── vite.config.js
+│   ├── tailwind.config.js
+│   └── postcss.config.js
 │
+├── .gitignore
 └── README.md
 
 
@@ -62,15 +82,15 @@ git clone https://github.com/ayushiyadav8421/FarmConnect.git
 cd FarmConnect
 
 ### Backend setup
-cd backend
-pip install -r requirements.txt
-python3 app.py  
+- cd backend
+-  pip install -r requirements.txt
+- python3 app.py  
 
 
 ### Frontend setup  
-cd farmConnect
-npm install
-npm run dev
+- cd farmConnect
+- npm install
+- npm run dev
 
 
 ---
@@ -83,9 +103,9 @@ npm run dev
 ---
 
 ## 💡 Author  
-Made with ❤️ by Ayushi  
+- Made with ❤️ by Ayushi  
 
 ---
 
 ## ⭐ Support  
-If you like this project, give it a ⭐ on GitHub!
+- If you like this project, give it a ⭐ on GitHub!
