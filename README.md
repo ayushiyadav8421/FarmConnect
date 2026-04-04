@@ -78,8 +78,8 @@ Frontend (React + Vite) ---> Backend (Flask API)
 ## ⚙️ Installation  
 
 ### Clone the repository  
-git clone https://github.com/ayushiyadav8421/FarmConnect.git
-cd FarmConnect
+#### git clone https://github.com/ayushiyadav8421/FarmConnect.git
+#### cd FarmConnect
 
 ### Backend setup
 - cd backend
