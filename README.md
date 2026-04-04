@@ -78,13 +78,15 @@ FARMCONNECT/
 
 ## ⚙️ Installation  
 
-### Clone the repository  
- - git clone https://github.com/ayushiyadav8421/FarmConnect.git
- - cd FarmConnect
+### Clone the repository 
+``` 
+ git clone https://github.com/ayushiyadav8421/FarmConnect.git
+ cd FarmConnect
+ ```
 
 ### Backend setup
 - cd backend
--  pip install -r requirements.txt
+- pip install -r requirements.txt
 - python3 app.py  
 
 
