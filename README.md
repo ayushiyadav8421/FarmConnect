@@ -14,7 +14,7 @@ Frontend (React + Vite) ---> Backend (Flask API)
 ---
 
 ## 📂 Project Structure  
-FARMCONNECT/
+- FARMCONNECT/
 │
 ├── backend/                  # Flask Backend
 │   ├── app.py
