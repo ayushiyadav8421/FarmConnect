@@ -14,7 +14,8 @@ Frontend (React + Vite) ---> Backend (Flask API)
 ---
 
 ## 📂 Project Structure  
-   FARMCONNECT/
+```
+FARMCONNECT/
 │
 ├── backend/                  # Flask Backend
 │   ├── app.py
@@ -56,7 +57,7 @@ Frontend (React + Vite) ---> Backend (Flask API)
 │
 ├── .gitignore
 └── README.md
-
+```
 
 ---
 
@@ -78,8 +79,8 @@ Frontend (React + Vite) ---> Backend (Flask API)
 ## ⚙️ Installation  
 
 ### Clone the repository  
-#### git clone https://github.com/ayushiyadav8421/FarmConnect.git
-#### cd FarmConnect
+ - git clone https://github.com/ayushiyadav8421/FarmConnect.git
+ - cd FarmConnect
 
 ### Backend setup
 - cd backend
