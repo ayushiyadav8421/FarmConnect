@@ -85,15 +85,19 @@ FARMCONNECT/
  ```
 
 ### Backend setup
-- cd backend
-- pip install -r requirements.txt
-- python3 app.py  
+```
+ cd backend
+ pip install -r requirements.txt
+ python3 app.py 
+ ``` 
 
 
 ### Frontend setup  
-- cd farmConnect
-- npm install
-- npm run dev
+```
+ cd farmConnect
+ npm install
+ npm run dev
+ ```
 
 
 ---
