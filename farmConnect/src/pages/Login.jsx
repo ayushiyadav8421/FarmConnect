@@ -49,6 +49,7 @@ export default function Login(){
     localStorage.setItem("user",data.email);
     localStorage.setItem("name",data.name);
     localStorage.setItem("role",data.role);
+    localStorage.setItem("user_id", data.id);
 
     alert("Login successful");
 

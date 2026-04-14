@@ -13,7 +13,8 @@ export default function Products() {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const search = params.get("search");
-
+  const [feedbacks, setFeedbacks] = useState({});
+  const userId = localStorage.getItem("user_id");
 
   // FETCH PRODUCTS
   useEffect(() => {
@@ -34,6 +35,19 @@ export default function Products() {
 
   }, [category, search]);
 
+  //feedback
+  useEffect(() => {
+    products.forEach(product => {
+      fetch(`http://127.0.0.1:5000/product-feedback/${product.id}`)
+        .then(res => res.json())
+        .then(data => {
+          setFeedbacks(prev => ({
+            ...prev,
+            [product.id]: data
+          }));
+        });
+    });
+  }, [products]);
 
   // BUY
   const buyProduct = async (product) => {
@@ -153,6 +167,103 @@ export default function Products() {
                 >
                   Add to Cart 🛒
                 </button>
+
+                {/* ⭐ FEEDBACK SECTION */}
+                <div className="mt-3">
+                  {/* Average Rating */}
+                  {(() => {
+                    const productFeedback = feedbacks[product.id] || [];
+
+                    const avgRating =
+                      productFeedback.length > 0
+                        ? (
+                          productFeedback.reduce((sum, f) => sum + f.rating, 0) /
+                          productFeedback.length
+                        ).toFixed(1)
+                        : 0;
+
+                    return (
+                      <p className="text-sm font-bold text-yellow-600">
+                        ⭐ {avgRating} / 5 ({productFeedback.length} reviews)
+                      </p>
+                    );
+                  })()}
+
+                  {/* Reviews */}
+                  {(feedbacks[product.id] || []).length === 0 ? (
+                    <p className="text-gray-500 text-sm">No reviews yet</p>
+                  ) : (
+                    (feedbacks[product.id] || []).slice(0, 2).map((f, i) => (
+                      // <div key={i} className="border p-2 mt-1 rounded text-sm">
+                      //   <p className="font-semibold">{f.user}</p>
+
+                      //   {/* ⭐ Star UI */}
+                      //   <p className="text-yellow-500">
+                      //     {"⭐".repeat(f.rating)}{"☆".repeat(5 - f.rating)}
+                      //   </p>
+
+                      //   <p>{f.comment}</p>
+                      // </div>
+                      <div
+                        key={i}
+                        className={`border p-2 mt-1 rounded text-sm ${f.user_id == userId ? "bg-yellow-50 border-yellow-400" : ""
+                          }`}
+                      >
+                        <p className="font-semibold">{f.user}</p>
+
+                        <p className="text-yellow-500">
+                          {"⭐".repeat(f.rating)}{"☆".repeat(5 - f.rating)}
+                        </p>
+
+                        <p>{f.comment}</p>
+
+                        {/* ✏️ EDIT BUTTON */}
+                        {f.user_id == userId && (
+                          <button
+                            onClick={() => {
+                              const newRating = prompt("Enter new rating (1-5):", f.rating);
+                              const newComment = prompt("Edit your comment:", f.comment);
+
+                              if (!newRating || !newComment) return;
+
+                              fetch("http://127.0.0.1:5000/add-feedback", {
+                                method: "POST",
+                                headers: {
+                                  "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({
+                                  user_id: userId,
+                                  product_id: product.id,
+                                  rating: parseInt(newRating),
+                                  comment: newComment
+                                })
+                              })
+                                .then(res => res.json())
+                                .then(data => {
+                                  alert(data.message);
+
+                                  // 🔄 refresh feedback
+                                  fetch(`http://127.0.0.1:5000/product-feedback/${product.id}`)
+                                    .then(res => res.json())
+                                    .then(data => {
+                                      setFeedbacks(prev => ({
+                                        ...prev,
+                                        [product.id]: data
+                                      }));
+                                    });
+                                });
+                            }}
+                            className="text-blue-500 text-xs mt-1 underline"
+                          >
+                            Edit your review
+                          </button>
+                        )}
+                      </div>
+                    ))
+                  )}
+
+                </div>
+
               </>
 
             )}

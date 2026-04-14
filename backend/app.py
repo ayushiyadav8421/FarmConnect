@@ -138,11 +138,13 @@ def login():
     password = data.get("password")
 
     db = get_db()
-    cursor = db.cursor()
+    cursor = db.cursor(dictionary=True)
 
-    sql = "SELECT name,email,role FROM users WHERE email=%s AND password=%s"
-
-    cursor.execute(sql,(email,password))
+    cursor.execute("""
+    SELECT id, name, email, role 
+    FROM users 
+    WHERE email=%s AND password=%s
+    """, (email, password))
 
     user = cursor.fetchone()
 
@@ -150,19 +152,17 @@ def login():
     db.close()
 
     if user:
-
         return jsonify({
-            "message":"Login successful",
-            "name":user[0],
-            "email":user[1],
-            "role":user[2]
+            "message": "Login successful",
+            "id": user["id"],   # ✅ IMPORTANT
+            "name": user["name"],
+            "email": user["email"],
+            "role": user["role"]
         })
-
     else:
-
         return jsonify({
-            "message":"Invalid email or password"
-        }),401
+            "message": "Invalid email or password"
+        }), 401
 
 
 # -----------------------
@@ -302,30 +302,67 @@ def get_image(filename):
 # Place order
 # -----------------------
 
+# @app.route("/place-order", methods=["POST"])
+# def place_order():
+
+#     data = request.json
+#     db = get_db()
+#     cursor = db.cursor()
+#     sql = """
+#     INSERT INTO orders(product_id, consumer_email, farmer_email, address)
+#     VALUES(%s,%s,%s,%s)
+#     """
+
+#     cursor.execute(sql,(
+#         data["product_id"],
+#         data["consumer_email"],
+#         data["farmer_email"],
+#         data.get("address", "")
+#     ))
+
+#     db.commit()
+#     cursor.close()
+#     db.close()
+
+
+#     return {"message":"Order placed successfully"}
 @app.route("/place-order", methods=["POST"])
 def place_order():
 
     data = request.json
     db = get_db()
     cursor = db.cursor()
-    sql = """
-    INSERT INTO orders(product_id, consumer_email, farmer_email, address)
-    VALUES(%s,%s,%s,%s)
-    """
 
-    cursor.execute(sql,(
-        data["product_id"],
-        data["consumer_email"],
-        data["farmer_email"],
-        data["address"],
-    ))
+    consumer_email = data.get("consumer_email")
+    address = data.get("address", "")
+
+    # 🔥 handle BOTH direct + cart
+    if "cart" in data:
+        for item in data["cart"]:
+            product_id = item["product_id"]
+
+            cursor.execute("""
+                INSERT INTO orders (product_id, consumer_email, farmer_email, address)
+                SELECT id, %s, farmer_email, %s
+                FROM products
+                WHERE id = %s
+            """, (consumer_email, address, product_id))
+
+    else:
+        product_id = data.get("product_id")
+
+        cursor.execute("""
+            INSERT INTO orders (product_id, consumer_email, farmer_email, address)
+            SELECT id, %s, farmer_email, %s
+            FROM products
+            WHERE id = %s
+        """, (consumer_email, address, product_id))
 
     db.commit()
     cursor.close()
     db.close()
 
-
-    return {"message":"Order placed successfully"}
+    return {"message": "Order placed successfully"}
 
 # -----------------------
 # Farmer orders
@@ -334,10 +371,17 @@ def place_order():
 def farmer_orders(email):
     db = get_db()
     cursor = db.cursor()
+    # sql = """
+    # SELECT orders.id, products.name, orders.consumer_email, orders.status, orders.updated_at
+    # FROM orders
+    # LEFT JOIN products ON orders.product_id = products.id
+    # WHERE orders.farmer_email=%s
+    # """
     sql = """
-    SELECT orders.id, products.name, orders.consumer_email, orders.status
+    SELECT orders.id, products.name, orders.consumer_email, 
+        orders.status, orders.updated_at, orders.address
     FROM orders
-    JOIN products ON orders.product_id = products.id
+    LEFT JOIN products ON orders.product_id = products.id
     WHERE orders.farmer_email=%s
     """
 
@@ -351,10 +395,12 @@ def farmer_orders(email):
     for row in result:
 
         orders.append({
-            "id":row[0],
-            "product":row[1],
-            "consumer":row[2],
-            "status":row[3]
+            "id": row[0],
+            "product": row[1] if row[1] else "Product Deleted",
+            "consumer": row[2],
+            "status": row[3],
+            "updated_at": row[4],
+            "address": row[5]   # ✅ ADD THIS
         })
 
     return jsonify(orders)
@@ -363,6 +409,7 @@ def farmer_orders(email):
 # -----------------------
 # Consumer orders
 # -----------------------
+
 @app.route("/consumer-orders/<email>", methods=["GET"])
 def consumer_orders(email):
 
@@ -370,9 +417,9 @@ def consumer_orders(email):
     cursor = db.cursor()
 
     sql = """
-    SELECT orders.id, products.name, orders.status
+    SELECT orders.id, products.id, products.name, orders.status
     FROM orders
-    JOIN products ON orders.product_id = products.id
+    LEFT JOIN products ON orders.product_id = products.id
     WHERE orders.consumer_email=%s
     """
 
@@ -384,7 +431,6 @@ def consumer_orders(email):
     for order in orders_data:
         order_id = order[0]
 
-        # ✅ fetch history
         cursor.execute("""
             SELECT status, updated_at
             FROM order_status_history
@@ -402,11 +448,13 @@ def consumer_orders(email):
             })
 
         orders.append({
-            "id": order_id,
-            "product": order[1],
-            "current_status": order[2],
-            "history": history
+        "id": order_id,
+        "product_id": order[1],   # ✅ FIX
+        "product": order[2] if order[2] else "Product Deleted",
+        "current_status": order[3] if order[3] else "pending",
+        "history": history
         })
+        #}) 
 
     cursor.close()
     db.close()
@@ -559,6 +607,89 @@ def search_suggestions():
         })
 
     return jsonify(suggestions)
+
+# -----------------------
+# Feedback form
+# -----------------------
+@app.route("/add-feedback", methods=["POST"])
+def add_feedback():
+    data = request.json
+
+    user_id = data.get("user_id")
+    product_id = data.get("product_id")
+    rating = data.get("rating")
+    comment = data.get("comment")
+
+    if not user_id:
+        return {"message": "User ID missing"}, 400
+
+    db = get_db()
+    cursor = db.cursor()
+
+    # 🔍 Check if feedback already exists
+    cursor.execute("""
+        SELECT * FROM feedback 
+        WHERE user_id=%s AND product_id=%s
+    """, (user_id, product_id))
+
+    existing = cursor.fetchone()
+
+    if existing:
+        # 🔄 UPDATE instead of blocking
+        cursor.execute("""
+            UPDATE feedback
+            SET rating=%s, comment=%s
+            WHERE user_id=%s AND product_id=%s
+        """, (rating, comment, user_id, product_id))
+
+        message = "Feedback updated successfully ✅"
+
+    else:
+        # 🆕 INSERT new feedback
+        cursor.execute("""
+            INSERT INTO feedback (user_id, product_id, rating, comment)
+            VALUES (%s, %s, %s, %s)
+        """, (user_id, product_id, rating, comment))
+
+        message = "Feedback added successfully ✅"
+
+    db.commit()
+    cursor.close()
+    db.close()
+
+    return {"message": message}
+# -----------------------
+# Show feedback in product page
+# -----------------------
+@app.route("/product-feedback/<int:product_id>", methods=["GET"])
+def product_feedback(product_id):
+
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute("""
+        SELECT users.name, feedback.rating, feedback.comment,feedback.user_id
+        FROM feedback
+        JOIN users ON feedback.user_id = users.id
+        WHERE feedback.product_id = %s
+    """, (product_id,))
+
+    rows = cursor.fetchall()
+
+    cursor.close()
+    db.close()
+
+    feedbacks = []
+
+    for row in rows:
+        feedbacks.append({
+            "user": row[0],
+            "user_id": row[3],
+            "rating": row[1],
+            "comment": row[2]
+        })
+
+    return jsonify(feedbacks)
 # -----------------------
 # Run server
 # -----------------------

@@ -10,6 +10,7 @@ export default function FarmerOrders() {
     fetch(`http://127.0.0.1:5000/farmer-orders/${email}`)
       .then(res => res.json())
       .then(data => {
+        console.log("ORDERS:", data);
         setOrders(data);
 
         // 👇 THIS IS THE KEY PART
@@ -47,8 +48,8 @@ export default function FarmerOrders() {
           order.id === id
             ? {
               ...order,
-              status: data.status,
-              updated_at: data.updated_at
+              status: data.status || order.status,   // 🔥 SAFE FIX
+              updated_at: data.updated_at || order.updated_at
             }
             : order
         )
@@ -66,13 +67,14 @@ export default function FarmerOrders() {
 
       {orders.map(order => {
 
-        const status = order.status?.toLowerCase();
+        const status = (order.status || "").toLowerCase();
 
         return (
           <div key={order.id} className="border p-5 mb-5 rounded shadow">
 
-            <p><b>Product:</b> {order.product}</p>
+            <p><b>Product:</b> {order.product || "Product Removed"}</p>
             <p><b>Consumer:</b> {order.consumer}</p>
+            <p><b>Address:</b> {order.address}</p>
 
             {/* 🎨 STATUS COLORS */}
             <p className={

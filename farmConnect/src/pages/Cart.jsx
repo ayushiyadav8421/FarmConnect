@@ -185,13 +185,45 @@ export default function Cart() {
                         />
 
                         <button
-                            onClick={() => {
-                                localStorage.removeItem(`cart_${user}`);
-                                setCart([]);
-                                setAddress("");
-                                alert("Order placed successfully ✅");
+                            onClick={async () => {
+                                if (!address) {
+                                    alert("Please enter address");
+                                    return;
+                                }
+
+                                try {
+                                    const res = await fetch("http://127.0.0.1:5000/place-order", {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify({
+                                            consumer_email: user,   // ✅ ADD HERE
+                                            cart: cart.map(item => ({
+                                                product_id: item.id,   // ✅ ADD HERE
+                                                quantity: item.quantity
+                                            })),
+                                            address: address
+                                        })
+                                    });
+
+                                    const data = await res.json();
+
+                                    if (res.ok) {
+                                        localStorage.removeItem(`cart_${user}`);
+                                        setCart([]);
+                                        setAddress("");
+                                        alert("Order placed successfully ✅");
+                                    } else {
+                                        alert(data.message || "Error placing order");
+                                    }
+
+                                } catch (err) {
+                                    console.error(err);
+                                    alert("Server error");
+                                }
                             }}
-                            className="bg-orange-500 text-white w-full py-3 mt-6 rounded font-bold"
+                            className="bg-orange-500 hover:bg-orange-600 text-white w-full py-3 mt-6 rounded-xl font-bold text-lg shadow-md transition duration-200 cursor-pointer"
                         >
                             Place Order
                         </button>
