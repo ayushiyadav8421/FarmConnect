@@ -170,6 +170,15 @@ def setup_db():
 
     except Exception as e:
         return str(e)
+    
+    # db testing
+@app.route("/test-db")
+def test_db():
+    try:
+        conn = get_db()
+        return "DB OK"
+    except Exception as e:
+        return str(e)
 
 # -----------------------
 # Register
