@@ -21,12 +21,20 @@ if not os.path.exists(UPLOAD_FOLDER):
 # -----------------------
 # MySQL connection
 # -----------------------
+# def get_db():
+#     return mysql.connector.connect(
+#         host="localhost",
+#         user="root",
+#         password="Chandan@2007",
+#         database="farmconnect"
+#     )
+
 def get_db():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="Chandan@2007",
-        database="farmconnect"
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME")
     )
 
 # -----------------------
@@ -90,6 +98,87 @@ def get_stats():
 @app.route("/")
 def home():
     return "FarmConnect Backend Running"
+
+# database
+@app.route("/init-db")
+def init_db():
+    import mysql.connector
+    import os
+
+    conn = mysql.connector.connect(
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD")
+    )
+
+    cursor = conn.cursor()
+
+    cursor.execute("CREATE DATABASE IF NOT EXISTS farmconnect")
+    cursor.execute("USE farmconnect")
+
+    # USERS
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(100),
+      email VARCHAR(100) UNIQUE,
+      password VARCHAR(100),
+      role VARCHAR(20)
+    )
+    """)
+
+    # PRODUCTS
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS products (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(100),
+      category VARCHAR(50),
+      price FLOAT,
+      farmer_email VARCHAR(100),
+      image VARCHAR(255)
+    )
+    """)
+
+    # ORDERS
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS orders (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      product_id INT,
+      consumer_email VARCHAR(100),
+      farmer_email VARCHAR(100),
+      status VARCHAR(50) DEFAULT 'pending',
+      address TEXT,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      ON UPDATE CURRENT_TIMESTAMP
+    )
+    """)
+
+    # ORDER HISTORY
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS order_status_history (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      order_id INT,
+      status VARCHAR(50),
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    # FEEDBACK
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS feedback (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT,
+      product_id INT,
+      rating INT,
+      comment TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    conn.commit()
+    conn.close()
+
+    return "✅ DATABASE CREATED SUCCESSFULLY"
 
 
 # -----------------------
