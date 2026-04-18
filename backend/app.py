@@ -21,22 +21,14 @@ if not os.path.exists(UPLOAD_FOLDER):
 # -----------------------
 # MySQL connection
 # -----------------------
-# def get_db():
-#     return mysql.connector.connect(
-#         host="localhost",
-#         user="root",
-#         password="Chandan@2007",
-#         database="farmconnect"
-#     )
-
 def get_db():
     return mysql.connector.connect(
-        host=os.getenv("DB_HOST"),
-        port=int(os.getenv("DB_PORT")),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        database=os.getenv("DB_NAME")
+        host="localhost",
+        user="root",
+        password="Chandan@2007",
+        database="farmconnect"
     )
+
 
 
 # -----------------------
@@ -102,83 +94,7 @@ def home():
     return "FarmConnect Backend Running"
 
 
-# db
-@app.route("/setup-db")
-def setup_db():
-    try:
-        conn = get_db()
-        cursor = conn.cursor()
-
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-          id INT AUTO_INCREMENT PRIMARY KEY,
-          name VARCHAR(100),
-          email VARCHAR(100) UNIQUE,
-          password VARCHAR(100),
-          role VARCHAR(20)
-        )
-        """)
-
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS products (
-          id INT AUTO_INCREMENT PRIMARY KEY,
-          name VARCHAR(100),
-          category VARCHAR(50),
-          price FLOAT,
-          farmer_email VARCHAR(100),
-          image VARCHAR(255)
-        )
-        """)
-
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS orders (
-          id INT AUTO_INCREMENT PRIMARY KEY,
-          product_id INT,
-          consumer_email VARCHAR(100),
-          farmer_email VARCHAR(100),
-          status VARCHAR(50) DEFAULT 'pending',
-          address TEXT,
-          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-        """)
-
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS order_status_history (
-          id INT AUTO_INCREMENT PRIMARY KEY,
-          order_id INT,
-          status VARCHAR(50),
-          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-        """)
-
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS feedback (
-          id INT AUTO_INCREMENT PRIMARY KEY,
-          user_id INT,
-          product_id INT,
-          rating INT,
-          comment TEXT,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-        """)
-
-        conn.commit()
-        cursor.close()
-        conn.close()
-
-        return "✅ Tables created successfully"
-
-    except Exception as e:
-        return str(e)
     
-    # db testing
-@app.route("/test-db")
-def test_db():
-    try:
-        conn = get_db()
-        return "DB OK"
-    except Exception as e:
-        return str(e)
 
 # -----------------------
 # Register
